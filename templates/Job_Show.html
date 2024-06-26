@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Show</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+        
+    <div class="container mt-5">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} mt-3" id="#alert-message">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+        <div class="row">
+            {% for job in jobs %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center ">{{ job[1] }}</h5>
+                        <p class="card-text">Skills - {{ job[2] }}</p>
+                        <p class="card-text">Backlogs - {{ job[3] }} </p>
+                        <p class="card-text">Salary - {{ job[4] }} LPA</p>
+                        <p class="card-text">Company - {{ job[7] }}</p>
+                        <p class="card-text">10/12th %  - {{ job[5] }}</p>
+                        <p class="card-text">Degree % - {{ job[6] }}</p>
+                        <button type="button" class="btn btn-primary post-button" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="showDetails('{{job[8]}}','{{job[1]}}','{{job[2]}}')">
+                          Apply
+                        </button>
+                    </div>
+                </div>
+            </div>
+           {% endfor %}
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Upload Resume For This Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+                <div class="container text-center">
+                    <form id="pdfForm" action="/Upload-Resume" method="post" enctype="multipart/form-data">
+
+                        <h1 class="text-center text-primary">Upload Resume</h1>
+                        
+                        <div class="row">
+                          <div class="col"><input type="text" name="recruiter_id" id="recruiter_id" style="display: none;"></div>
+                        </div>
+                        <div class="row">
+                          <div class="col"><input type="text" name="role"  id="role" style="display: none;"></div>
+                        </div>
+                        <div class="row">
+                          <div class="col"><input type="text" name="skills"  id="skills" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="row">
+                        <div class="col"><input type="file" id="pdfInput" accept=".pdf"  name="resume"></div>
+                        </div>
+            <div class="mb-3">
+              <button type="submit" class="btn btn-success" >Upload</button>
+            </div>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+  </div>
+    
+
+
+
+
+    <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+
+      function showDetails(recruiter_id,role,skills){
+        document.getElementById('recruiter_id').value = recruiter_id;
+        document.getElementById('role').value = role;
+        document.getElementById('skills').value = skills;
+
+      }
+
+    </script>
+
+</body>
+</html>

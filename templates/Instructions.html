@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">    
+    <style>
+         .container{
+        width: 50%;
+        margin-top: 70px;
+      }
+
+      
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-warning text-center">Test Instructions</h1>
+        <p class="text-info text-center">Read the instructions properly before attending the test</p>
+        <ol>
+            <li>Use Laptop/Desktop</li>
+            <li>Ensure proper network connectivity</li>
+            <li>Make sure your device have webcame/microphone</li>
+            <li>Don't do any malpractice activities like (using mobile,face spoofing,switching tabs ....)</li>
+            <li>Attend the exam in proper lighting</li>
+        </ol>
+        <p style="font-weight: bold;">Test Duration - 15 minutes</p>
+        <p style="font-weight: bold;">Test Rounds</p>
+        <p style="font-weight: bold;">Aptitude - 10 questions</p>
+        <p style="font-weight: bold;">Technical - 3 questions</p>
+        <p style="font-weight: bold;">Virtual Interview</p>
+        <a href="/Capture_Image" class="btn btn-primary">Start Assessment</a>
+    </div>
+          <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+          <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+
+</html>

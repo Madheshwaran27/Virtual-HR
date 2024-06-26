@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+</head>
+<body>
+    
+    <div class="container mt-5">
+        <button class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">Add a Question</button>
+    
+        <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Question</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/Add-Technical">
+                <div class="mb-3">
+                    <div class="row"><label style="font-weight: bold;">Question</label></div>
+                    <div class="row"><textarea class="border border-dark" name="question" id="" cols="10" rows="5" style="resize: none;" required></textarea></div>
+                </div>
+                <div class="mb-3">
+                    <label style="font-weight: bold;">Option A</label>
+                    <input type="text" class="form-control border border-dark"  name="a" required>
+                </div>
+                <div class="mb-3">
+                    <label style="font-weight: bold;">Option B</label>
+                    <input type="text" class="form-control border border-dark" name="b" required>
+                </div>
+                <div class="mb-3">
+                    <label style="font-weight: bold;">Option C</label>
+                    <input type="text" class="form-control border border-dark" name="c" required>
+                </div>
+                <div class="mb-3">
+                    <label style="font-weight: bold;">Option D</label>
+                    <input type="text" class="form-control border border-dark" name="d" required>
+                </div>
+                <div class="mb-3">
+                    <label style="font-weight: bold;">Answer</label>
+                    <input type="text" class="form-control border border-dark" name="ans" required>
+                </div>
+                <div class="mb-3">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-success">Add</button>
+                </div>
+                </form>
+              </div>
+          </div>
+        </div>
+      </div>
+    
+    
+    
+    
+        {% for question in questions %}
+        <div class="container mt-3 border border-dark p-5">
+            <div class="row">
+                <div class="col"><p>Question {{question[0]}}</p></div><div class="col"><button class="btn btn-danger" style="float:right;">Delete</button></div>
+            </div>
+            <div class="row"><pre><p>{{question[1]}}</p></pre></div>
+            <div class="row">
+                <div class="col"><p>A. {{question[2]}}</p></div>
+                <div class="col"><p>B. {{question[3]}}</p></div>
+                <div class="col"><p>C. {{question[4]}}</p></div>
+                <div class="col"><p>D. {{question[5]}}</p></div>
+            </div>
+            <div class="row"><p>Answer : {{question[6].upper()}}</p></div>
+        </div>
+        {% endfor %}
+        </div>
+
+    <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">    
+</head>
+<body>
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+          <div class="alert alert-{{ category }}" role="alert" style="margin-top: 50px;">
+              {{ message }}
+          </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  <form action="/Send-Email" method="post">
+    <table class="table" style="margin-top: 100px;">
+        <thead>
+          <tr>
+            <th scope="col">Candidate Name</th>
+            <th scope="col">Mobile</th>
+            <th scope="col">Email</th>
+            <th scope="col">Role</th>
+            <th scope="col">Resume Score</th>
+            <th scope="col">Test Link Sent</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% for applicant in applicants %}
+          <tr>
+            <td>{{applicant[2]}}</td>
+            <td>{{applicant[3]}}</td>
+            <td>{{applicant[1]}}</td>
+            <td>{{applicant[5]}}</td>
+            <td>{{applicant[7]}}</td>
+            <td>{{applicant[8]}}</td>
+            
+            <td><button onclick="showResume('{{applicant[4]}}')">Show Resume</button></td>
+            <td><input type="checkbox" value="{{applicant[1]}},{{applicant[3]}},{{applicant[5]}}" name="email" style="height: 20px;width: 20px;"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <input type="text" name="recruiter_email" value="{{recruiter_email}}" style="display: none;">
+    <button type="submit" class="btn btn-info text-center">Interview Selection</button>
+      
+    </form>
+    <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+
+   <script>
+
+   function showResume(resumePath) {
+   //D:\Madhesh\venv\User_Resume\Madheshwaran G_Resume.pdf
+   console.log(resumePath);
+    var remove_path = 'd:\\Madhesh\\venv\\';
+    var trimmed_resumePath = resumePath.replace(remove_path,'')
+    var true_resumePath = trimmed_resumePath.replace('User_Resume','User_Resume\\')
+    console.log(true_resumePath)
+    // Specify the desired height and width for the pop-up window
+    var popupHeight = 600; // in pixels
+    var popupWidth = 800; // in pixels
+
+    // Calculate the position for centering the pop-up window
+    var topPosition = (window.innerHeight - popupHeight) / 2;
+    var leftPosition = (window.innerWidth - popupWidth) / 2;
+
+    // Open pop-up with PDF viewer and set height, width, and position
+    var popupWindow = window.open('/show_resume?path=' + encodeURIComponent(true_resumePath), '_blank', 'toolbar=0,location=0,menubar=0,height=' + popupHeight + ',width=' + popupWidth + ',top=' + topPosition + ',left=' + leftPosition);
+    popupWindow.focus(); // Ensure the pop-up window is focused
+}
+
+
+   </script>
+    <script>
+      $(document).ready(function(){
+          $(".alert").hide(5000);
+      });
+  </script>
+</body>
+</html>

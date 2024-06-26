@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection and Capture</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+
+    <script src="{{url_for('static',filename='js/face-api.js')}}"></script>
+
+    <style>
+        /* body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .camera{
+            width:50%;
+            height: 30%;
+            background-color: cadetblue;
+            text-align: center;
+           
+        } */
+
+        
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center">
+    <div class="camera">
+    <h1 class="text-center">Show Your Face </h1>
+    <video id="video" width="640" height="480" autoplay></video><br>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    
+    <button id="captureBtn" class="btn btn-warning" style="display:none;">Capture</button>
+    <form action="/Save_Image" enctype="multipart/form-data" method="post">
+        <input type="file" name="userImage" id="userImage">
+        <button type="submit" class="btn btn-success" id="saveBtn" style="display: none;">Next</button>
+    </form>
+    </div>
+    </div>
+    <script>
+        async function startCamera() {
+            const video = document.getElementById('video');
+            const captureBtn = document.getElementById('captureBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const userImage = document.getElementById('userImage');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            let isCaptured = false;
+
+            await faceapi.nets.tinyFaceDetector.loadFromUri('static/js/models');
+            await faceapi.nets.faceLandmark68Net.loadFromUri('static/js/models');
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+
+                    // Start face detection
+                    setInterval(async () => {
+                        const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions());
+
+                        if (detections.length > 0 && !isCaptured) {
+                            // Show capture button if a face is detected
+                            captureBtn.style.display = 'block';
+                        } else {
+                            // Hide capture button if no face is detected or after capture
+                            captureBtn.style.display = 'none';
+                        }
+                    }, 1000); // Check every second
+
+                    // Capture button click event
+                    captureBtn.addEventListener('click', () => {
+                        if (!isCaptured) {
+                            // Draw current video frame on canvas
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                            // Show save button
+                            saveBtn.style.display = 'block';
+                            // Set captured flag to true
+                            isCaptured = true;
+                            // Hide video element and show canvas
+                            video.style.display = 'none';
+                            canvas.style.display = 'block';
+                            const imageData = canvas.toDataURL('image/jpeg');
+                            function dataURLToBlob(imageData) {
+                                var arr = imageData.split(',');
+                                var mime = arr[0].match(/:(.*?);/)[1];
+                                var bstr = atob(arr[1]);
+                                var n = bstr.length;
+                                var u8arr = new Uint8Array(n);
+                                while (n--) {
+                                    u8arr[n] = bstr.charCodeAt(n);
+                                }
+                                return new Blob([u8arr], { type: mime });
+                            }
+                            // Convert data URL to blob
+                            var blob = dataURLToBlob(imageData);
+
+                            // Create a file object from the blob
+                            var file = new File([blob], 'User.jpg', { type: 'image/jpeg' }); // Change 'image.jpg' to your desired file name
+                            // Create a DataTransfer object and add the File object to it
+                            var dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            // Assign the file object to the file input element
+                            userImage.files = dataTransfer.files;
+
+                // Function to convert data URL to blob
+               
+
+                    }
+                });
+            });
+    }
+
+        startCamera();
+    </script>
+</body>
+</html>

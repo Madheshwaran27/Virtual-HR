@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical</title>
+  <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+
+  <style>
+    span{
+      font-size: larger;
+      background-color:red;
+      color: white;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 40%;
+
+    }
+  </style>
+</head>
+<body>
+  
+  <form action="/Technical-Check" method="post">
+
+  <div class="question-div"  style="display: inline-flex;margin: 20px;">
+    {% for question in questions %}
+
+    <section id = "{{question[0]}}" style="width:790px;margin-right: 10px;">
+    <div id="quiz-card" class="card" style="width:100%;border: none;" >
+      <div class="card-body">
+        <h2 id="question" class="card-title"><pre>{{question[0]}}. {{question[1]}}</pre></h2>
+        <p><input type="radio" value="a" name="ans{{question[0]}}"> A. {{question[2]}}</p>
+        <p><input type="radio" value="b" name="ans{{question[0]}}"> B. {{question[3]}}</p>
+        <p><input type="radio" value="c" name="ans{{question[0]}}"> C. {{question[4]}}</p>
+        <p><input type="radio" value="d" name="ans{{question[0]}}"> D. {{question[5]}}</p>
+        {% if question[0]==1 %}
+        <a href="#{{question[0]+1}}" class="btn btn-primary" style="float: right;">Next</a>
+        {% else %}
+        {% if question[0] == count[0] %}
+        <!-- <button class="btn btn-success" style="float: right;">Submit</button> -->
+        <a href="{{url_for('chatbot')}}" target="test-frame" class="btn btn-success">Submit</a>
+        {% else %}
+        <a href="#{{question[0]+1}}" class="btn btn-primary" style="float: right;">Next</a>
+        {% endif %}
+        <a href="#{{question[0]-1}}" class="btn btn-warning" style="float: right;margin-right: 10px;">Previous</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+    {% endfor %}
+  </div>
+  </form>
+  <!-- <div class="container text-center" style="position: fixed;">
+    {% for question in questions %}
+    <span><a href="#{{question[0]}}">{{question[0]}}</a></span>
+    {% endfor %}
+  </div> -->
+
+
+
+
+  
+  <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">    
+   
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        a{
+            text-decoration: none;
+        }
+        .navbar-nav {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        }
+
+        .nav-item {
+        text-align: center;
+        margin-right: 50px;
+        }
+
+        .main{
+            width: 80%;
+            height: 100vh;
+            float: right;
+            background-color: rgb(204, 192, 192);
+        }
+
+        .sidebar{
+            width: 20%;
+            float: left;
+            margin-top: 70px;
+        }
+
+        .sidebar ul {
+            width: 100%;
+            height: 100vh;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            margin-top: 30px;
+            padding-top:20px ;
+
+        }
+
+        .sidebar ul li{
+            margin-left: 60px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul li a{
+            text-decoration: none;
+            font-size: 1.25rem;
+            padding: 10px;
+        }
+
+        .sidebar-exit{
+            display: none;
+            transition: .5s;
+        }
+
+        .main-extend{
+            width: 100%;
+            transition: .5s;
+        }
+       
+        iframe{
+            width: 100%;
+            height: 100%;
+            margin-top: 70px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-primary fixed-top">
+        <div class="container-fluid" >
+          <a class="navbar-brand text-light" href="#" style="font-size: 2rem;" ><i class="bi bi-robot"></i>Virtual HR</a>
+          <a class="navbar-brand text-light ml-3 toggleBtn" href="#" style="font-size: 2rem; margin-left: 20px;"><i class="bi bi-list"></i></a>
+          <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active text-light" style="font-size: 1.5rem;" aria-current="page" href="/"><i class="bi bi-house-fill"></i>Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active text-light" style="font-size: 1.5rem;" aria-current="page" href="#"><i class="bi bi-person-fill"></i>{{c_name}}</a>
+              </li>
+            </ul>    
+          </div>
+        </div>
+      </nav>
+
+
+    <div class="main" id="dashChange">
+        <iframe src="{{url_for('candidate_home')}}" frameborder="0" name="candidate_frame"></iframe>
+    </div>
+
+    <div class="sidebar side-dashboard">
+        <ul>
+            <li class="text-primary" style="font-size: 1.25rem;font-weight: bold;">Dashboard Candidate</li>
+            <li><a href="{{url_for('personal_details')}}" target="candidate_frame" class="dash-link text-primary"><i class="bi-clipboard" style="margin-right: 10px;"></i>Personal Details</a></li>
+            <li><a href="{{url_for('education_details')}}" target="candidate_frame" class="dash-link text-primary"><i class="bi-clipboard" style="margin-right: 10px;"></i>Education</a></li>
+            <li><a href="{{url_for('experience_details')}}" target="candidate_frame" class="dash-link text-primary"><i class="bi-clipboard" style="margin-right: 10px;"></i>Experience</a></li>
+            <li><a href="{{url_for('job_show')}}" target="candidate_frame" class="dash-link text-primary"><i class="bi-person-workspace" style="margin-right: 10px;"></i>Jobs</a></li>
+            <li><a href="#" class="dash-link text-primary"><i class="bi-person-video3" style="margin-right: 10px;"></i>Interview</a></li>
+            <li><a href="{{url_for('index')}}" class="dash-link text-primary"><i class="bi-box-arrow-left" style="margin-right: 10px;"></i>Logout</a></li>
+        </ul>
+    </div>
+
+
+
+    <script>
+        const toggleBtn = document.querySelector('.toggleBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const main = document.querySelector('.main');
+
+        toggleBtn.addEventListener('click',()=>{
+            sidebar.classList.toggle('sidebar-exit');
+            main.classList.toggle('main-extend');
+        });
+
+
+    </script>
+    
+
+    
+    <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+    
+</body>
+</html>

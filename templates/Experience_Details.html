@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mt-3" id="#alert-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    <form action="/Experience-Details-Store" method="post">
+
+        <div class="row">
+            <div class="col"><label for="">Experience</label></div>
+        </div>
+        <div class="row">
+            <div class="col"><input type="text" class="form-control border-dark" name="experience"></div>
+        </div>
+        <div class="row">
+            <div class="col"><label for="">Designation</label></div>
+        </div>
+        <div class="row">
+            <div class="col"><input type="text" class="form-control border-dark" name="designation"></div>
+        </div>
+        <div class="row">
+            <div class="col"><label for="">Year / Duration</label></div>
+        </div>
+        <div class="row">
+            <div class="col"><input type="text" class="form-control border-dark" name="year"></div>
+            <div class="col"><input type="text" class="form-control border-dark" name="month" placeholder="in months"></div>
+        </div>
+        <div class="row">
+            <div class="col"><label for="">Company Name</label></div>
+        </div>
+        <div class="row">
+            <div class="col"><input type="text" class="form-control border-dark" name="company"></div>
+        </div>
+        <div class="row">
+            <div class="col"><label for="">Location</label></div>
+        </div>
+        <div class="row">
+            <div class="col"><input type="text" class="form-control border-dark" name="location"></div>
+        </div>
+        <div class="row">
+            <div class="col">
+            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="clear" class="btn btn-danger">Clear</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+    <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</body>
+</html>

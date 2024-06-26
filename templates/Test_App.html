@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz App</title>
+  <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+  <style>
+   
+    .video-container{
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+    .video-container video{
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      border: 3px solid green;
+      object-fit: cover; 
+      border-radius: 50%;
+    }
+    #canvas{
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 50%;
+    }
+
+    /* iframe{
+      border: 2px solid black;
+    } */
+
+
+    /* .questions{
+      width: 50%;
+      height: 50%;
+      position: absolute;
+      left: 25%;
+      top: 10%;
+      background-color: aqua;
+      overflow: hidden;
+    } */
+  
+  </style>
+</head>
+<body>
+
+    <div class="container fliud">
+        <div class="row">
+        <div class="col">
+          <div class="video-container">
+          <video id="video"  autoplay></video>
+          <canvas id="canvas" width="200" height="200"></canvas>
+          </div>
+        </div>
+        </div>
+    </div>
+    
+    <div id="timer" style="width: 70px;height: 50px;float: right;font-weight: bold;">
+
+    </div>
+    <h1 class="text-success text-center">Welcome To the Assesment</h1>
+    <h3 class="text-primary text-center">Aptitude Questions</h3>
+    <!-- <div class="questions">
+    {% for question in questions %}
+    <section id = "{{question[0]}}" style="width:100%;margin-bottom: 30px;">
+    <div id="quiz-card" class="card" style="width:100%;" >
+      <div class="card-body">
+        <h2 id="question" class="card-title">{{question[1]}}</h2>
+        <p><input type="radio">A. {{question[2]}}</p>
+        <p><input type="radio">B. {{question[3]}}</p>
+        <p><input type="radio">C. {{question[4]}}</p>
+        <p><input type="radio">D. {{question[5]}}</p>
+        {% if question[0]==1 %}
+        <a href="#{{question[0]+1}}" class="btn btn-primary">Next</a>
+        {% else %}
+        <a href="#{{question[0]-1}}" class="btn btn-info mr-2">Previous</a>
+        <a href="#{{question[0]+1}}" class="btn btn-primary">Next</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+    {% endfor %}
+    </div> -->
+
+    
+    <iframe src="{{url_for('quiz')}}" name="test-frame" frameborder="0" width="800" height="500" style="margin-top: 30px;margin-left: 300px;" scrolling="no"></iframe>
+    
+    <!-- <button onclick="startRecognition()" class="btn btn-primary" style="float: right;">start</button> -->
+    <!-- <button onclick="stopDetection()" class="btn btn-warning" style="float: right;">stop</button> -->
+   
+
+    <div class="container" style="display:flex;">
+      <div class="row">
+        <div class="col">
+          <form action="">
+           <input type="text" id="cellphone" hidden>       
+           <input type="text" id="noface" hidden>
+           <input type="text" id="unknownface" hidden>
+           <button type="submit" id="endBtn" disabled>End Assesment</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+  <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{url_for('static',filename='js/face-api.js')}}"></script>
+  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+  <script>
+    async function startRecognition(img_path) {
+      // Load Face-API.js models
+      //const options = faceapi.TinyFaceDetectorOptions({ inputSize: 320 })
+
+      //await faceapi.loadSsdMobilenetv1Model('js/models');
+      await faceapi.loadTinyFaceDetectorModel('static/js/models');
+      await faceapi.loadFaceLandmarkModel('static/js/models');
+      await faceapi.loadFaceRecognitionModel('static/js/models');
+        //.TinyFaceDetectorOptions({ inputSize: 320 }) , await faceapi.tinyFaceDetector(input, options)
+      // Load specific person's image for comparison
+      const specificPersonImage = await faceapi.fetchImage(img_path);
+      const specificPersonDescriptor = await faceapi.computeFaceDescriptor(specificPersonImage);
+      
+      
+      // Intialize Counter variables
+
+      var noFace = 0;
+      var unknownFace = 0;
+    
+      const width = 200;
+      const height = 200;
+
+
+      // Get video element and canvas
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      // const ctx = canvas.getContext('2d');
+      const displaySize = { width:width, height:height };
+      faceapi.matchDimensions(canvas, displaySize);
+
+      // Start video stream from webcam
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          video.srcObject = stream;
+          video.play();
+        });
+
+      video.addEventListener('play', async () => {
+        const interval = setInterval(async () => {
+          // Detect faces and extract descriptors
+          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 160 })).withFaceLandmarks().withFaceDescriptors();
+          // Draw detection and landmarks
+            const resizedDetections = faceapi.resizeResults(detections, displaySize);
+            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+            faceapi.draw.drawDetections(canvas, resizedDetections);
+            // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+          // Compare descriptors with specific person's descriptor
+          if (detections.length === 1) {
+            const labeledDescriptors = new faceapi.LabeledFaceDescriptors('Specific Person', [specificPersonDescriptor]);
+            const faceMatcher = new faceapi.FaceMatcher([labeledDescriptors]);
+            const bestMatch = faceMatcher.findBestMatch(detections[0].descriptor);
+            // console.log("distance of face",bestMatch.distance);
+            if (bestMatch.distance <= 0.65) { // Adjust the threshold as needed
+              console.log("Specific person detected!");
+              detectObjects(video,canvas);
+             
+            } else {
+              alert("Unknown person detected!");
+              unknownFace++;
+              document.getElementById('unknownface').value = unknownFace;
+              detectObjects(video,canvas);
+
+            }
+          }
+          else if (detections.length>1){
+            alert('Multiple Persons detected');
+            detectObjects(video,canvas);
+          }
+
+
+          else {
+            noFace++;
+            if (noFace % 10 == 0){
+                alert("No Faces Detected");
+            }
+            document.getElementById('noface').value = noFace;
+            detectObjects(video,canvas);
+          }
+
+        }, 1000);
+      });
+
+
+    }
+
+
+
+    //Mobile detection Function
+
+    function detectObjects(videoElement, canvasElement) {
+    // const ctx = canvasElement.getContext('2d');
+    var mobileCount = 0;
+    // const width = 200;
+    // const height = 200;
+   
+    const detector = ml5.objectDetector('cocossd', modelLoaded);
+    
+    function modelLoaded() {
+        detector.detect(videoElement, (error, results) => {
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            console.log(results[0].label);
+            if(results[0].label == "cell phone"){
+              alert('Mobile Detected');
+              mobileCount++;
+              document.getElementById('cellphone').value = mobileCount;
+              console.log("count : ",mobileCount);
+            }
+            // ctx.fillStyle = "#000000"
+            // ctx.fillRect(0,0, width, height);
+
+            // ctx.drawImage(video, 0, 0);
+            // for (let i = 0; i < results.length; i += 1) {
+      
+            // ctx.font = "20px Arial";
+
+            // ctx.fillStyle = "aqua";
+            // ctx.fillText(results[i].label, results[i].x + 4, results[i].y + 16); 
+
+            // ctx.beginPath();
+            // ctx.rect(results[i].x, results[i].y, results[i].width, results[i].height);
+            // ctx.strokeStyle = "blue";
+            // ctx.stroke();
+            // ctx.closePath();
+
+
+            // }
+
+        });
+    }
+}
+
+
+function stopDetection(){
+   var video = document.getElementById('video');
+    video.srcObject = null;
+    video = null;
+}
+
+let timerInterval; // Variable to store the timer interval
+let timerSeconds = 900; // 1 hour in seconds
+
+const timerDisplay = document.getElementById('timer');
+
+function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secondsLeft = seconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timerSeconds--;
+        if (timerSeconds >= 0) {
+            timerDisplay.textContent = formatTime(timerSeconds);
+        } else {
+            clearInterval(timerInterval);
+            alert('Timer expired!');
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerSeconds = 3600; // Reset the timer to 1 hour
+    timerDisplay.textContent = formatTime(timerSeconds);
+}
+
+// startRecognition('{{image_path}}');
+window.onload = startTimer;
+
+
+</script>
+</body>
+</html>
+

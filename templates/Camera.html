@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Face Recognition on Webcam</title>
+    
+</head>
+<body>
+    <h1>Face Recognition on Webcam</h1>
+    <button onclick="detectFace('Madhesh.jpg')">Detect Face</button>
+    <div class="video-container" style="height:200px;width: 200px;">
+    <video id="video" width="100%" height="100%" autoplay ></video>
+    </div>
+    <canvas id="canvas" width="100" height="100" style="display:none;"></canvas>
+    <div id="detectionResult"></div>
+    <script src="js/face-api.js"></script>
+    <script>
+    function detectFace(img_path){
+        const image = new Image();
+        image.src = img_path; // Replace 'path_to_your_specific_image.jpg' with the actual path to the specific image you want to recognize
+
+        // Load face-api.js models
+        async function loadModels() {
+            await faceapi.loadSsdMobilenetv1Model('js/models');
+            await faceapi.loadFaceLandmarkModel('js/models');
+            await faceapi.loadFaceRecognitionModel('js/models');
+        }
+
+        loadModels().then(() => startFaceRecognition());
+
+        async function startFaceRecognition() {
+            const labeledFaceDescriptors = await loadLabeledImages();
+
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const detectionResult = document.getElementById('detectionResult');
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function (err) {
+                    console.error('Error accessing the camera: ', err);
+                });
+
+            video.addEventListener('play', async () => {
+                const displaySize = { width: video.width, height: video.height };
+                faceapi.matchDimensions(canvas, displaySize);
+
+                setInterval(async () => {
+                    const detections = await faceapi.detectAllFaces(video, new faceapi.SsdMobilenetv1Options()).withFaceLandmarks().withFaceDescriptors();
+                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+                    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                    faceapi.draw.drawDetections(canvas, resizedDetections);
+                    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+
+                    if (detections.length > 0) {
+                        const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors);
+                        const bestMatch = faceMatcher.findBestMatch(detections[0].descriptor);
+                        if (bestMatch._label === 'Known') { // Replace 'Your_Label' with the name or label of the specific person in your image
+                            video.style.border = '2px solid green';
+                            detectionResult.textContent = '';
+                        } else {
+                            detectionResult.textContent = 'Face Not Detected';
+                            video.style.border = '2px solid red';
+                        }
+                    } else {
+                        detectionResult.textContent = 'No Face Detected';
+                        video.style.border = '2px solid red';
+                    }
+                }, 1000);
+            });
+        }
+
+        async function loadLabeledImages() {
+            const labels = ['Known']; // Replace 'Your_Label' with the name or label of the specific person in your image
+            return Promise.all(
+                labels.map(async label => {
+                    const img = await faceapi.fetchImage(image.src);
+                    const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
+                    if (!detections) {
+                        throw new Error(`No face detected for label: ${label}`);
+                    }
+                    return new faceapi.LabeledFaceDescriptors(label, [detections.descriptor]);
+                })
+            );
+        }
+    }
+    </script>
+</body>
+</html>

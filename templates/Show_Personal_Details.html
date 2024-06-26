@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <div class="container">
+        <form action="/Personal-Details-Update" method="post" id="fulldetailsForm">
+    
+            <div class="container container-sm">
+    
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} mt-3" id="#alert-message">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+    
+            <div class="row">
+                <div class="col">
+                    <label for="" class="form-label border-dark"> First Name</label>
+                </div>
+                <div class="col">
+                    <label for="" class="form-label border-dark">Last Name</label>
+                </div>
+                <div class="col">
+                    <label for="" class="form-label border-dark">Gender</label>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" class="form-control border-dark" name="f_name" value ="{{f_name}}" disabled>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control border-dark" name="l_name" value ="{{l_name}}" disabled>
+                </div>
+                <div class="col">
+                    <select name="gender" id="" class="form-select border-dark"  disabled>
+                        <option value="{{gender}}" selected>{{gender}}</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="others">Others</option>
+                        
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+               <div class="col"> <label for="" class="form-label">Address</label> </div>
+            </div>
+            <div class="row">
+                <div class="col"> <label for="" class="form-label">State</label> </div>
+                <div class="col"> <label for="" class="form-label">District</label> </div>
+                <div class="col"> <label for="" class="form-label">City</label> </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control border-dark" name="state" value="{{state}}" disabled>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control border-dark" name="dist" value="{{dist}}" disabled>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control border-dark" name="city" value="{{city}}" disabled>
+                    </div>
+                </div>
+            <div class="row mb-3">
+                <div class="col"> <label for="" class="form-label">Street</label> </div>
+                <div class="col"> <label for="" class="form-label">Postal Code</label></div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" class="form-control border-dark" name="street" value="{{street}}" disabled>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control border-dark" name="pin_code" value="{{pin_code}}" disabled>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"> <label for="" class="form-label">Email</label> </div>
+                <div class="col"> <label for="" class="form-label">Date Of Birth</label> </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col"><input type="text" class="form-control border-dark" name="email" value ="{{email}}" disabled></div>
+                <div class="col"><input type="date" id="dob" class="form-control border-dark" name="d_o_b" value="{{dob}}" disabled></div>
+            </div>
+            <div class="row">
+                <div class="col"> <label for="" class="form-label">Mobile</label> </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" class="form-control border-dark" name="mobile" value ="{{mobile}}" disabled>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-success" id="detailsEditBtn" >Edit</button>
+                </div>
+            </div>
+        </form>
+        </div>
+
+
+
+
+
+
+    <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>

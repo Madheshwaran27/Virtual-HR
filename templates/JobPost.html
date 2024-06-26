@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job post</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">    
+
+    <style>
+        .post-button{
+            margin-top: 50px;
+            margin-left: 20px;
+        }
+
+        body{
+            background-color: rgb(211, 206, 206);
+        }
+    </style>
+
+</head>
+<body>
+ 
+    <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary post-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Post a Job
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Job Description</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" action="/Jobposts">
+            <div class="mb-3">
+                <label>Role</label>
+                <input type="text" class="form-control border border-dark" name="role" aria-describedby="nameHelp" required>
+            </div>
+            <div class="mb-3">
+                <label >Skills</label>
+                <input type="text" class="form-control border border-dark"  name="skills"aria-describedby="emailHelp" required>
+            </div>
+            <div class="mb-3">
+                <label>Backlogs</label>
+                <input type="text" class="form-control border border-dark" name="experience" aria-describedby="nameHelp" required>
+            </div>
+            <div class="mb-3">
+                <label>Salary(in LPA)</label>
+                <input type="text" class="form-control border border-dark" name="salary" required>
+            </div>
+            <div class="mb-3">
+                <label>10th / 12th %</label>
+                <input type="text" class="form-control border border-dark" name="school_mark" required>
+            </div>
+            <div class="mb-3">
+                <label>Degree %</label>
+                <input type="text" class="form-control border border-dark" name="degree" required>
+            </div>
+            <div class="mb-3">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-success">Post</button>
+            </div>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-5">
+    <div class="row">
+        {% for job in jobs %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center ">{{ job[1] }}</h5>
+                    <p class="card-text">Skills - {{ job[2] }}</p>
+                    <p class="card-text">Backlogs - {{ job[3] }} </p>
+                    <p class="card-text">Salary - {{ job[4] }} LPA</p>
+                    <p class="card-text">Company - {{ job[7] }}</p>
+                    <p class="card-text">10/12th %  - {{ job[5] }}</p>
+                    <p class="card-text">Degree % - {{ job[6] }}</p>
+                     <form id="deleteForm_{{ job[0] }}" method="post" action="{{ url_for('job_delete', id=job[0]) }}">
+                    <button type="submit" class="btn btn-danger" onclick="confirmDelete('{{job[0]}}')" id="">Delete</button>
+                </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+  
+
+    <script src="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function confirmDelete(id) {
+            if (!(confirm('Are you sure you want to delete this Job Post?'))) {
+        
+                document.getElementById("deleteForm_"+id).addEventListener("submit", function(event) {
+                event.preventDefault(); 
+                });   
+            }
+            else{
+                document.getElementById("deleteForm_"+id).submit();
+            }
+}
+    </script>
+
+</body>
+</html>
